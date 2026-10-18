@@ -1,0 +1,14 @@
+{
+  "name": "khai-cuoc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Không gian tự học với AI, bàn cờ, quiz và thẻ ôn tập.",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": { "node": ">=22.13.0" },
+  "license": "MIT"
+}
