@@ -1,0 +1,102 @@
+export const STORAGE_KEY = 'khai-cuoc.v1';
+export const uid = () => globalThis.crypto.randomUUID();
+export const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const normalize = s => String(s).normalize('NFC').replace(/\s+/g, ' ').trim();
+export function dayKey(date = new Date()) {
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+export const mentors = [
+  {name:'An',piece:'♟',elo:800,rank:'Tốt',line:'Không cần đi thật nhanh. Chỉ cần hôm nay đi thêm một nước.'},
+  {name:'Kỳ',piece:'♞',elo:1000,rank:'Mã',line:'Thử nhìn câu hỏi từ một góc khác. Bạn đã biết nhiều hơn mình nghĩ.'},
+  {name:'Lâm',piece:'♝',elo:1200,rank:'Tượng',line:'Kết nối điều vừa học với một điều đã biết. Kiến thức sẽ ở lại lâu hơn.'},
+  {name:'Minh',piece:'♜',elo:1400,rank:'Xe',line:'Một nền tảng vững giúp những nước đi sau trở nên rõ ràng.'},
+  {name:'Chi',piece:'♛',elo:1600,rank:'Hậu',line:'Hãy giải thích bằng lời của mình. Hiểu là khi bạn có thể kể lại.'},
+  {name:'Trí',piece:'♚',elo:2000,rank:'Vua',line:'Thành thạo không phải biết tất cả. Là biết khi nào cần học lại.'}
+];
+export const mentorFor = elo => mentors.filter(m => elo >= m.elo).at(-1) || mentors[0];
+const facts = [
+  ['Chủ động nhớ lại','Thay vì chỉ đọc lại, hãy đóng tài liệu và tự nhớ kiến thức. Việc chủ động truy xuất giúp bạn nhận ra điều mình chưa nắm.','Sau khi đọc một đoạn, cách nào giúp kiểm tra mình đã nhớ được gì?', ['Đóng tài liệu và tự kể lại','Đọc liên tục mà không dừng','Chỉ đánh dấu mọi câu','Chuyển sang chủ đề khác'],0],
+  ['Chủ động nhớ lại','Sau khi trả lời, đối chiếu với tài liệu để sửa chỗ thiếu hoặc sai. Phản hồi cụ thể giúp tránh ghi nhớ một cách hiểu không đúng.','Sau khi tự trả lời, bạn nên làm gì?', ['Bỏ qua câu trả lời','Đối chiếu với tài liệu','Chỉ xem điểm số','Ghi nhớ đáp án bất kể đúng sai'],1],
+  ['Ôn cách quãng','Ôn cách quãng là chia các lần ôn thành nhiều thời điểm, thay vì dồn tất cả vào một buổi. Khoảng nghỉ tạo cơ hội luyện nhớ lại.','Ôn cách quãng có nghĩa là gì?', ['Ôn toàn bộ trong một đêm','Chỉ học mỗi tháng một lần','Chia việc ôn thành nhiều thời điểm','Không ôn lại nội dung cũ'],2],
+  ['Ôn cách quãng','Những nội dung còn khó nhớ nên được gặp lại sớm hơn. Với điều đã nhớ vững, có thể giãn khoảng cách trước lần ôn tiếp theo.','Nên sắp xếp thẻ khó nhớ như thế nào?', ['Không xem lại nữa','Ôn lại sớm hơn thẻ đã nhớ','Luôn đợi đúng một năm','Chỉ đọc tiêu đề thẻ'],1],
+  ['Giải thích đơn giản','Giải thích một ý bằng ngôn ngữ đơn giản giúp làm lộ ra những chỗ bạn chưa hiểu. Nếu bị vướng, hãy quay lại tài liệu ở đúng phần đó.','Khi không thể giải thích một ý, bước tiếp theo phù hợp là gì?', ['Dùng thêm thuật ngữ khó','Bỏ qua cả môn học','Quay lại tài liệu ở phần bị vướng','Chép nguyên văn rồi dừng lại'],2],
+  ['Giải thích đơn giản','Một ví dụ cụ thể giúp nối khái niệm với tình huống có thể hình dung. Ví dụ nên thể hiện đúng ý chính của khái niệm.','Một ví dụ tốt cần đáp ứng điều gì?', ['Càng dài càng tốt','Có thật nhiều thuật ngữ','Không liên quan tới khái niệm','Thể hiện đúng ý chính'],3],
+  ['Học có mục tiêu','Một mục tiêu rõ ràng mô tả việc có thể thực hiện, chẳng hạn giải thích được ba khái niệm. Điều này giúp biết lúc nào buổi học đã đạt yêu cầu.','Mục tiêu nào cụ thể nhất?', ['Giải thích được ba khái niệm của bài','Học thật nhiều','Trở nên giỏi ngay hôm nay','Đọc khi có thời gian'],0],
+  ['Học có mục tiêu','Chia nhiệm vụ lớn thành những phần nhỏ có điểm kết thúc rõ ràng giúp dễ bắt đầu hơn. Hoàn thành từng phần cũng cho thấy tiến độ thực tế.','Vì sao nên chia nhiệm vụ lớn thành phần nhỏ?', ['Để tránh học phần khó mãi mãi','Để dễ bắt đầu và theo dõi tiến độ','Để tăng số tài liệu phải đọc','Để không cần đặt mục tiêu'],1],
+  ['Tập trung từng việc','Trong một khoảng học, tắt thông báo không cần thiết và chỉ giữ tài liệu liên quan. Việc chuyển liên tục giữa các tác vụ làm ngắt mạch suy nghĩ.','Điều gì giúp giảm việc ngắt mạch suy nghĩ?', ['Mở mọi thông báo','Đổi tác vụ liên tục','Tắt thông báo không cần thiết','Vừa học vừa kiểm tra mạng xã hội'],2],
+  ['Tập trung từng việc','Khoảng nghỉ ngắn là cơ hội rời màn hình, vận động nhẹ và quay lại với mục tiêu tiếp theo. Bạn có thể điều chỉnh nhịp học theo sức tập trung của mình.','Trong khoảng nghỉ, hoạt động nào phù hợp với tài liệu?', ['Mở thêm tác vụ công việc','Rời màn hình và vận động nhẹ','Cố học dù đã kiệt sức','Bỏ luôn mục tiêu của buổi học'],1],
+  ['Học từ lỗi sai','Một câu sai là thông tin về chỗ cần học lại. Ghi rõ vì sao sai và đối chiếu nguồn hữu ích hơn việc chỉ chép đáp án đúng.','Cách nào tận dụng tốt một câu làm sai?', ['Chỉ xóa câu sai','Ghi lý do sai rồi đối chiếu nguồn','Không nhìn lại câu đó','Chép mỗi chữ cái đáp án'],1],
+  ['Học từ lỗi sai','Khi xem lại tiến độ, hãy tìm dạng câu thường vướng để chọn nội dung ôn tiếp theo. Tiến độ giúp điều chỉnh cách học, không chỉ để so sánh điểm.','Bạn nên dùng tiến độ học để làm gì?', ['Chỉ so điểm với người khác','Tránh tất cả chủ đề mới','Chọn nội dung cần ôn tiếp','Giữ nguyên cách học dù chưa hiệu quả'],2]
+];
+export function makeDemo() {
+  return {id:'demo-learning',title:'Học cách học',description:'6 nguyên tắc nhỏ, một cách học bền vững hơn.',subject:'Kỹ năng học tập',kind:'demo',created:Date.now(),completed:[],questions:facts.map((f,i)=>({id:`demo-q${i}`,topic:f[0],sourceQuote:f[1],sourcePage:Math.floor(i/2)+1,prompt:f[2],options:f[3],answerIndex:f[4],explanation:f[1]}))};
+}
+export function initialState() {
+  return {version:1,profile:{name:'Bạn',elo:800},courses:[makeDemo()],stats:{},reviews:{},activity:{},settings:{endpoint:''}};
+}
+export const lessons = course => Array.from({length:Math.ceil(course.questions.length/3)},(_,i)=>({index:i,questions:course.questions.slice(i*3,i*3+3)}));
+export const progress = course => Math.round(course.completed.length / lessons(course).length*100);
+export function recordAnswer(state, question, correct) {
+  const before=state.profile.elo;
+  const s = state.stats[question.id] ||= {seen:0,correct:0,wrong:0,rewarded:false,penalized:false};
+  s.seen++; s[correct?'correct':'wrong']++;
+  let delta=0;
+  if(correct && !s.rewarded){delta=12;s.rewarded=true;}
+  if(!correct && !s.penalized){delta=-6;s.penalized=true;}
+  state.profile.elo=Math.max(800,state.profile.elo+delta);
+  const key=dayKey(); state.activity[key]=(state.activity[key]||0)+1;
+  return state.profile.elo-before;
+}
+export function streak(state, now=new Date()) {
+  const d=new Date(now); if(!state.activity[dayKey(d)])d.setDate(d.getDate()-1);
+  let count=0; while(state.activity[dayKey(d)]){count++;d.setDate(d.getDate()-1);} return count;
+}
+export function reviewAnswer(state, questionId, known, now=Date.now()) {
+  const prior=state.reviews[questionId]||{interval:0};
+  const interval=known ? (prior.interval ? Math.min(prior.interval*2,30):1) : 0;
+  state.reviews[questionId]={interval,due:now+(known?interval*86400000:300000)};
+  const key=dayKey(new Date(now));state.activity[key]=(state.activity[key]||0)+1;
+}
+export function validateQuestions(data, pages) {
+  if(!data || !Array.isArray(data.questions) || data.questions.length<3 || data.questions.length>24)throw Error('Cần từ 3 đến 24 câu hỏi hợp lệ.');
+  const prompts=new Set();
+  return data.questions.map(q=>{
+    if(typeof q.prompt!=='string'||q.prompt.length<8||q.prompt.length>1000||!Array.isArray(q.options)||q.options.length!==4||q.options.some(o=>typeof o!=='string'||!o.trim()||o.length>700)||new Set(q.options.map(normalize)).size!==4||!Number.isInteger(q.answerIndex)||q.answerIndex<0||q.answerIndex>3||typeof q.explanation!=='string'||!q.explanation.trim()||q.explanation.length>2000||typeof q.sourceQuote!=='string'||q.sourceQuote.length<15||q.sourceQuote.length>2500||!Number.isInteger(q.sourcePage)||q.sourcePage<1||typeof q.topic!=='string'||!q.topic.trim()||q.topic.length>100)throw Error('Cấu trúc câu hỏi không hợp lệ. Hãy thử tạo lại.');
+    if(prompts.has(normalize(q.prompt)))throw Error('Bộ câu hỏi có câu bị trùng. Hãy thử tạo lại.');
+    prompts.add(normalize(q.prompt));
+    if(pages){const page=pages.find(p=>p.page===q.sourcePage);if(!page||!normalize(page.text).includes(normalize(q.sourceQuote)))throw Error('Một trích dẫn AI không khớp tài liệu. Chưa lưu bộ câu hỏi này; hãy thử lại.');}
+    return {id:uid(),topic:q.topic,prompt:q.prompt,options:q.options,answerIndex:q.answerIndex,explanation:q.explanation,sourceQuote:q.sourceQuote,sourcePage:q.sourcePage};
+  });
+}
+export function validateBackup(data) {
+  if(data?.version!==1||!data.profile||typeof data.profile.name!=='string'||data.profile.name.length>40||!Number.isFinite(data.profile.elo)||data.profile.elo<800||data.profile.elo>100000||!Array.isArray(data.courses)||data.courses.length>50)throw Error('Bản sao lưu không hợp lệ.');
+  const ids=new Set();
+  const courses=data.courses.map(c=>{
+    if(typeof c.id!=='string'||!isSafeId(c.id)||ids.has(c.id)||typeof c.title!=='string'||!c.title.trim()||c.title.length>120||typeof c.description!=='string'||c.description.length>500||typeof c.subject!=='string'||c.subject.length>100)throw Error('Thông tin lộ trình không hợp lệ.');
+    ids.add(c.id);
+    const questions=validateQuestions(c);
+    for(let i=0;i<questions.length;i++){
+      const qid=c.questions[i].id;
+      if(typeof qid!=='string'||!isSafeId(qid)||ids.has(qid))throw Error('Mã câu hỏi không hợp lệ.');
+      ids.add(qid);questions[i].id=qid;
+    }
+    const count=Math.ceil(questions.length/3);
+    if(!Array.isArray(c.completed)||c.completed.some((n,i)=>n!==i||n>=count))throw Error('Tiến độ lộ trình không hợp lệ.');
+    return {id:c.id,title:c.title,description:c.description,subject:c.subject,kind:c.kind==='demo'?'demo':'ai',created:Number(c.created)||Date.now(),completed:[...c.completed],questions};
+  });
+  const stats={},reviews={},activity={};
+  for(const c of courses)for(const q of c.questions){
+    const s=data.stats?.[q.id],r=data.reviews?.[q.id];
+    if(s){if(!['seen','correct','wrong'].every(k=>Number.isInteger(s[k])&&s[k]>=0&&s[k]<10000000)||s.seen!==s.correct+s.wrong)throw Error('Thống kê không hợp lệ.');stats[q.id]={seen:s.seen,correct:s.correct,wrong:s.wrong,rewarded:!!s.rewarded,penalized:!!s.penalized};}
+    if(r){if(!Number.isFinite(r.due)||!Number.isFinite(r.interval)||r.interval<0||r.interval>30)throw Error('Lịch ôn không hợp lệ.');reviews[q.id]={due:r.due,interval:r.interval};}
+  }
+  for(const [date,n] of Object.entries(data.activity||{})){if(/^\d{4}-\d{2}-\d{2}$/.test(date)&&Number.isInteger(n)&&n>0&&n<10000000)activity[date]=n;}
+  return {version:1,profile:{name:data.profile.name,elo:Math.round(data.profile.elo)},courses,stats,reviews,activity,settings:{endpoint:''}};
+}
+const isSafeId=id=>/^[a-zA-Z0-9][a-zA-Z0-9-]{0,99}$/.test(id)&&!['constructor','prototype','__proto__'].includes(id);
+export function safeEndpoint(value) {
+  if(!value)return '';
+  const url=new URL(value,globalThis.location?.href||'http://localhost');
+  if(url.username||url.password||url.search||url.hash||!(url.protocol==='https:' || (url.protocol==='http:'&&['localhost','127.0.0.1','[::1]'].includes(url.hostname))))throw Error('Dùng URL HTTPS (hoặc localhost khi phát triển), không kèm khóa hay tham số.');
+  return url.href;
+}
