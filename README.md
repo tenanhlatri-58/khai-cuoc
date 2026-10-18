@@ -4,7 +4,7 @@
 
 Mã nguồn mở theo MIT. Giao diện độc lập, lấy cảm hứng từ ý tưởng học bằng bàn cờ; không dùng mã nguồn, logo hay hình ảnh của Gambit Study và không liên kết với dịch vụ đó.
 
-Tài khoản xuất bản đã chọn: **tenanhlatri-58**. Repo dự kiến: `tenanhlatri-58/khai-cuoc`. URL web dự kiến sau khi triển khai: `https://tenanhlatri-58.github.io/khai-cuoc/`. Đây chưa phải xác nhận repo hoặc web đã được xuất bản.
+Repo công khai: [tenanhlatri-58/khai-cuoc](https://github.com/tenanhlatri-58/khai-cuoc). Web được triển khai tự động bằng GitHub Actions tại [tenanhlatri-58.github.io/khai-cuoc](https://tenanhlatri-58.github.io/khai-cuoc/). Bộ mẫu dùng ngay; tính năng tạo quiz AI cần chủ web cấu hình API riêng theo hướng dẫn bên dưới.
 
 ![Giao diện Khai Cuộc](docs/preview-desktop.png)
 
@@ -139,7 +139,7 @@ tests/                      Unit/integration tests, không gọi API trả phí
 - Đã thử 27 điểm kiểm tra trên trình duyệt Chrome: làm bài, mở khóa, tải lại giữ tiến độ, ôn thẻ, hồ sơ, sao lưu/khôi phục, PDF.js đọc PDF thật, tìm kiếm, tạo lộ trình qua API giả lập, phản hồi khi server chưa có khóa, các trang ở 1440px và 390px.
 - Bản build tĩnh đã chạy thử ở đường dẫn con `/khai-cuoc/`, gồm cả đọc PDF bằng worker. Đã kiểm tra `dist/` không chứa server, API hay `.env`.
 - Không dùng khóa API thật trong kiểm thử và chưa xác nhận kết nối AI trả phí ngoài thực tế.
-- Đã cấu hình sẵn workflow và Worker; **chưa đăng lên GitHub hay triển khai Cloudflare** trong bản bàn giao. Cần repo và quyền tài khoản của bạn để xuất bản.
+- Mã nguồn đã đưa lên GitHub, GitHub Pages dùng workflow kiểm thử và triển khai tự động. **Cloudflare/OpenAI chưa được cấu hình** trong bản bàn giao; cần tài khoản và khóa API của chủ web để bật tạo câu hỏi AI cho người dùng.
 
 ## Giấy phép
 
