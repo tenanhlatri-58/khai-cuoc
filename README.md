@@ -4,7 +4,9 @@
 
 Mã nguồn mở theo MIT. Giao diện độc lập, lấy cảm hứng từ ý tưởng học bằng bàn cờ; không dùng mã nguồn, logo hay hình ảnh của Gambit Study và không liên kết với dịch vụ đó.
 
-Repo công khai: [tenanhlatri-58/khai-cuoc](https://github.com/tenanhlatri-58/khai-cuoc). Web được triển khai tự động bằng GitHub Actions tại [tenanhlatri-58.github.io/khai-cuoc](https://tenanhlatri-58.github.io/khai-cuoc/). Bộ mẫu dùng ngay; tính năng tạo quiz AI cần chủ web cấu hình API riêng theo hướng dẫn bên dưới.
+Repo công khai: [tenanhlatri-58/khai-cuoc](https://github.com/tenanhlatri-58/khai-cuoc). Web được triển khai tự động bằng GitHub Actions tại [tenanhlatri-58.github.io/khai-cuoc](https://tenanhlatri-58.github.io/khai-cuoc/). Bộ mẫu dùng ngay. API Cloudflare đã triển khai và kết nối; khóa OpenAI hiện cần được chủ web kiểm tra lại để bật tạo quiz AI.
+
+API của bản triển khai này: `https://khai-cuoc-api.tenanhlatri.workers.dev/api/generate`. Khóa OpenAI được nhập trong Cloudflare, **không nhập vào giao diện học hoặc mã nguồn**.
 
 ![Giao diện Khai Cuộc](docs/preview-desktop.png)
 
@@ -106,6 +108,8 @@ API có giới hạn **2 lượt/IP/phút** và **10 lượt/phút theo điểm 
 
 ## Quyền riêng tư và khóa
 
+Nếu triển khai trực tiếp qua trình soạn mã Cloudflare: chạy `node scripts/build-worker.mjs`, dùng nội dung `worker/dashboard-worker.mjs` cho Worker. Thêm origin và hai Rate limiter đúng như `wrangler.toml`, sau đó trong **Settings → Runtime variables and secrets → Add variable** đặt Key `OPENAI_API_KEY`, bật **Secret**, nhập key và triển khai. Khi sửa mã API, tạo lại bundle bằng lệnh trên trước khi cập nhật Worker. Không dùng bản bundle cũ sau khi sửa nguồn.
+
 - Tệp được đọc trong trình duyệt. Chỉ gửi văn bản và số trang khi người học chọn tạo quiz và đồng ý trong biểu mẫu.
 - Văn bản gửi tới URL API đã cấu hình, sau đó tới OpenAI. Chỉ dùng API đáng tin. Không gửi tài liệu bạn không muốn chia sẻ với các dịch vụ đó.
 - Không giữ tệp gốc hoặc toàn bộ tài liệu trong localStorage. Bộ câu hỏi, đáp án, trích dẫn, lịch ôn và tiến độ được lưu trên thiết bị.
@@ -135,11 +139,11 @@ tests/                      Unit/integration tests, không gọi API trả phí
 
 ## Kiểm thử và trạng thái bản bàn giao
 
-- 16 bài kiểm thử tự động: điểm Elo, lịch ôn, chuỗi ngày, nguồn AI, dữ liệu sao lưu, URL API, CORS, quyền truy cập và rate limit.
+- 19 bài kiểm thử tự động: điểm Elo, lịch ôn, chuỗi ngày, nguồn AI, dữ liệu sao lưu, URL API, CORS, quyền truy cập, rate limit và bản bundle dùng trong trình soạn mã Cloudflare.
 - Đã thử 27 điểm kiểm tra trên trình duyệt Chrome: làm bài, mở khóa, tải lại giữ tiến độ, ôn thẻ, hồ sơ, sao lưu/khôi phục, PDF.js đọc PDF thật, tìm kiếm, tạo lộ trình qua API giả lập, phản hồi khi server chưa có khóa, các trang ở 1440px và 390px.
 - Bản build tĩnh đã chạy thử ở đường dẫn con `/khai-cuoc/`, gồm cả đọc PDF bằng worker. Đã kiểm tra `dist/` không chứa server, API hay `.env`.
-- Không dùng khóa API thật trong kiểm thử và chưa xác nhận kết nối AI trả phí ngoài thực tế.
-- Mã nguồn đã đưa lên GitHub, GitHub Pages dùng workflow kiểm thử và triển khai tự động. **Cloudflare/OpenAI chưa được cấu hình** trong bản bàn giao; cần tài khoản và khóa API của chủ web để bật tạo câu hỏi AI cho người dùng.
+- Kiểm thử tự động dùng phản hồi giả lập, không gọi API trả phí. Ngày 19/10/2026 đã thử tạo 6 câu từ web công khai qua Worker thật: kết nối tới OpenAI hoạt động nhưng nhà cung cấp trả lỗi xác thực/quyền truy cập (401 hoặc 403). Chưa tạo thành công bộ câu hỏi AI thật.
+- Cloudflare Worker `khai-cuoc-api` đã triển khai với origin GitHub Pages, hai rate limiter và secret `OPENAI_API_KEY`. Chủ web cần cập nhật secret bằng khóa OpenAI hợp lệ có quyền dùng model `gpt-5-mini`, rồi Deploy và thử lại. Không đưa khóa vào GitHub hoặc URL API.
 
 ## Giấy phép
 
